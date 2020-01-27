@@ -1,5 +1,10 @@
 .git
 
+LICENSE
+.latexmkrc
+
+*.md
+*.yml
 *.tex
 *.aux
 *.log
