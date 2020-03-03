@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/mizunashi-mana/docker-texlive-core:texlive2020
+FROM registry.gitlab.com/mizunashi-mana/docker-texlive-core:texlive2019
 
 RUN apk add --no-cache \
       bash \
@@ -19,6 +19,7 @@ RUN apk add --no-cache --virtual .fetch-deps xz tar wget \
       collection-latexextra \
       collection-mathscience \
       collection-langjapanese \
+      stix2-type1 \
       latexmk \
       latexpand \
       latexdiff \
