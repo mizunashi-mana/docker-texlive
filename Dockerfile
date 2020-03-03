@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/mizunashi-mana/docker-texlive-core:latest
+FROM registry.gitlab.com/mizunashi-mana/docker-texlive-core:texlive2020
 
 RUN apk add --no-cache \
       bash \

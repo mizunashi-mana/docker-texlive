@@ -1,6 +1,7 @@
 image: docker:stable
 services:
-  - docker:dind
+  # See https://gitlab.com/gitlab-com/support-forum/issues/5202
+  - docker:19.03.5-dind
 
 stages:
   - build
