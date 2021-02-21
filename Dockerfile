@@ -1,6 +1,6 @@
 FROM frolvlad/alpine-glibc:latest AS core
 
-ENV TEXLIVE_VERSION=2021 \
+ENV TEXLIVE_VERSION=2020 \
     TEXDIR=/usr/local/texlive \
     INSTALL_DIR=/tmp/install-tl
 
