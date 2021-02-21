@@ -6,7 +6,7 @@ on:
     branches:
       - master
 
-  push-version:
+  push_version:
     # Publish `v1.2.3` tags as releases.
     tags:
       - v*
