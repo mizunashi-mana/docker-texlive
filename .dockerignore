@@ -1,4 +1,5 @@
 .git
+.github
 
 LICENSE
 .latexmkrc
@@ -10,4 +11,8 @@ example
 *.tex
 *.aux
 *.log
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.dvi
 *.pdf
