@@ -22,10 +22,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run tests
+      - name: Run build
         run: |
           docker-compose --file docker-compose.test.yml build
+
+      - name: Run core test
+        run: |
           docker-compose --file docker-compose.test.yml run sut-core
+      - name: Run full test
+        run: |
           docker-compose --file docker-compose.test.yml run sut-full
 
   # Push image to GitHub Packages.

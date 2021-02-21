@@ -34,13 +34,13 @@ RUN apk add --no-cache \
       bash \
       make
 
-RUN apk add --no-cache python3 \
+RUN apk add --no-cache python3 py3-pip \
  && pip3 install --upgrade pip \
  && pip3 install \
       pipenv \
       pygments
 
-RUN apk add --no-cache --virtual .fetch-deps xz tar wget \
+RUN apk add --no-cache xz tar wget \
  && tlmgr update --self --all \
  && tlmgr install \
       collection-fontsrecommended \
@@ -52,8 +52,7 @@ RUN apk add --no-cache --virtual .fetch-deps xz tar wget \
       stix2-type1 \
       latexmk \
       latexpand \
-      latexdiff \
- && apk del .fetch-deps
+      latexdiff
 
 WORKDIR /workdir
 
