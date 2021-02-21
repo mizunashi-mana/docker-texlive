@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  sut-core:
+    build:
+      context: .
+      target: core
+    volumes:
+    - ./example/core:/workdir
+    command: pdflatex sample.tex
+
+  sut-full:
+    build:
+      context: .
+      target: full
+    volumes:
+    - ./example/full:/workdir
+    command: latexmk -pdfdvi sample.tex

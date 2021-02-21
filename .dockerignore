@@ -2,6 +2,7 @@
 
 LICENSE
 .latexmkrc
+example
 
 *.tar.gz
 *.md
