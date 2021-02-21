@@ -3,6 +3,7 @@
 LICENSE
 .latexmkrc
 
+*.tar.gz
 *.md
 *.yml
 *.tex

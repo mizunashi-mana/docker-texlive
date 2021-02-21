@@ -5,8 +5,8 @@ with some useful tools.
 ## Usage
 
 ```bash
-docker login registry.gitlab.com
+docker login docker.pkg.github.com
 docker run -it --volume "$(pwd):/workdir" \
-  registry.gitlab.com/mizunashi-mana/docker-texlive \
+  docker.pkg.github.com/mizunashi-mana/docker-texlive/full \
   latexmk -pdfdvi sample.tex
 ```

@@ -1,4 +1,34 @@
-FROM registry.gitlab.com/mizunashi-mana/docker-texlive-core:texlive2019
+FROM frolvlad/alpine-glibc:latest AS core
+
+ENV TEXLIVE_VERSION=2021 \
+    TEXDIR=/usr/local/texlive \
+    INSTALL_DIR=/tmp/install-tl
+
+RUN apk add --no-cache \
+      curl \
+      perl \
+      fontconfig-dev \
+      freetype-dev
+
+RUN mkdir -p "${INSTALL_DIR}"
+ADD texlive.profile "${INSTALL_DIR}/texlive.profile"
+
+ENV PATH="${TEXDIR}/bin/x86_64-linuxmusl:${PATH}"
+
+RUN apk add --no-cache --virtual .fetch-deps xz tar wget \
+ && curl -L "http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz" \
+      | tar -xz -C "${INSTALL_DIR}" --strip-components=1 \
+ && "${INSTALL_DIR}/install-tl" \
+      "--profile=${INSTALL_DIR}/texlive.profile" \
+ && rm -rf "${INSTALL_DIR}" \
+ && apk del .fetch-deps
+
+WORKDIR /workdir
+
+CMD ["sh"]
+
+
+FROM core AS full
 
 RUN apk add --no-cache \
       bash \
