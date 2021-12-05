@@ -37,7 +37,7 @@ RUN apk add --no-cache \
 RUN apk add --no-cache python3 py3-pip \
  && pip3 install --upgrade pip \
  && pip3 install \
-      pipenv \
+      poetry \
       pygments
 
 RUN apk add --no-cache xz tar wget \
