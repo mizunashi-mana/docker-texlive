@@ -1,6 +1,6 @@
-FROM frolvlad/alpine-glibc:latest AS core
+FROM alpine:latest AS core
 
-ENV TEXLIVE_VERSION=2020 \
+ENV TEXLIVE_VERSION=2021 \
     TEXDIR=/usr/local/texlive \
     INSTALL_DIR=/tmp/install-tl
 
@@ -31,10 +31,16 @@ CMD ["sh"]
 FROM core AS full
 
 RUN apk add --no-cache \
+      gcc \
+      musl-dev \
+      libffi-dev \
       bash \
       make
 
-RUN apk add --no-cache python3 py3-pip \
+RUN apk add --no-cache \
+      python3 \
+      python3-dev \
+      py3-pip \
  && pip3 install --upgrade pip \
  && pip3 install \
       poetry \
@@ -47,9 +53,9 @@ RUN apk add --no-cache xz tar wget \
       collection-latexrecommended \
       collection-pictures \
       collection-latexextra \
+      collection-fontsextra \
       collection-mathscience \
       collection-langjapanese \
-      stix2-type1 \
       latexmk \
       latexpand \
       latexdiff
