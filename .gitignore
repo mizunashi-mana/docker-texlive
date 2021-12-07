@@ -2,6 +2,6 @@
 *.log
 *.fdb_latexmk
 *.fls
-*.synctex.gz
+*.synctex*
 *.dvi
 *.pdf
