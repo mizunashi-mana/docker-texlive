@@ -1,4 +1,4 @@
-FROM alpine:latest AS core
+FROM alpine:latest AS basic
 
 ENV TEXLIVE_VERSION=2021 \
     TEXDIR=/usr/local/texlive \
@@ -28,7 +28,37 @@ WORKDIR /workdir
 CMD ["sh"]
 
 
-FROM core AS full
+FROM basic AS recommended
+
+# for tlmgr
+RUN apk add --no-cache xz tar wget
+
+RUN tlmgr update --self --all \
+ && tlmgr install \
+      collection-latex \
+      collection-fontsrecommended \
+      collection-latexrecommended
+
+WORKDIR /workdir
+
+CMD ["sh"]
+
+
+FROM recommended AS extra
+
+RUN tlmgr update --self --all \
+ && tlmgr install \
+      collection-pictures \
+      collection-latexextra \
+      collection-fontsextra \
+      collection-mathscience
+
+WORKDIR /workdir
+
+CMD ["sh"]
+
+
+FROM extra AS full
 
 RUN apk add --no-cache \
       gcc \
@@ -46,16 +76,10 @@ RUN apk add --no-cache \
       poetry \
       pygments
 
-RUN apk add --no-cache xz tar wget \
- && tlmgr update --self --all \
+RUN tlmgr update --self --all \
  && tlmgr install \
-      collection-fontsrecommended \
-      collection-latexrecommended \
-      collection-pictures \
-      collection-latexextra \
-      collection-fontsextra \
-      collection-mathscience \
       collection-langjapanese \
+      collection-luatex \
       latexmk \
       latexpand \
       latexdiff

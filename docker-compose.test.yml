@@ -15,4 +15,4 @@ services:
       target: full
     volumes:
     - ./example/full:/workdir
-    command: latexmk -pdfdvi sample.tex
+    command: latexmk sample.tex
