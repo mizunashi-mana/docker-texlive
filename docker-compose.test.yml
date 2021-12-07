@@ -1,12 +1,12 @@
 version: "3.9"
 
 services:
-  sut-core:
+  sut-basic:
     build:
       context: .
-      target: core
+      target: basic
     volumes:
-    - ./example/core:/workdir
+    - ./example/basic:/workdir
     command: pdflatex sample.tex
 
   sut-full:
