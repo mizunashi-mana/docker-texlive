@@ -34,9 +34,9 @@ jobs:
         run: |
           docker-compose --file docker-compose.test.yml build
 
-      - name: Run core test
+      - name: Run basic test
         run: |
-          docker-compose --file docker-compose.test.yml run sut-core
+          docker-compose --file docker-compose.test.yml run sut-basic
       - name: Run full test
         run: |
           docker-compose --file docker-compose.test.yml run sut-full
