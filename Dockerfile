@@ -24,7 +24,7 @@ EOT
 RUN mkdir -p "${INSTALL_DIR}"
 ADD texlive.profile "${INSTALL_DIR}/texlive.profile"
 
-ENV PATH="${TEXDIR}/bin/aarch64-linux:${PATH}"
+ENV PATH="${TEXDIR}/bin/default:${PATH}"
 
 RUN <<EOT
 INSTALL_DEPS=(wget xzdec)
@@ -37,6 +37,7 @@ wget -O- "${TEXLIVE_MIRROR_URL}/tlnet/install-tl-unx.tar.gz" \
 
 "${INSTALL_DIR}/install-tl" \
   "--profile=${INSTALL_DIR}/texlive.profile"
+ln -sf "${TEXDIR}/bin/"*-linux "${TEXDIR}/bin/default"
 
 rm -rf "${INSTALL_DIR}"
 apt-get remove -y "${INSTALL_DEPS[@]}"
