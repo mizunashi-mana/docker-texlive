@@ -121,6 +121,7 @@ apt-get update -y
 apt-get install -y python3
 
 wget -O- https://install.python-poetry.org | python3 -
+ln -sf "$HOME/.local/bin/poetry" /usr/local/bin/poetry
 
 apt-get clean -y
 rm -rf /var/lib/apt/lists/*
