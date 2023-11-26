@@ -1,27 +1,51 @@
-FROM alpine:latest AS basic
+# syntax=docker/dockerfile:1.4
 
-ENV TEXLIVE_VERSION=2021 \
+FROM debian:bookworm-slim AS basic
+
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+
+ENV TEXLIVE_VERSION=2023 \
     TEXDIR=/usr/local/texlive \
-    INSTALL_DIR=/tmp/install-tl
+    INSTALL_DIR=/tmp/install-tl \
+    TEXLIVE_MIRROR_URL=https://mirror.ctan.org/systems/texlive
 
-RUN apk add --no-cache \
-      curl \
-      perl \
-      fontconfig-dev \
-      freetype-dev
+RUN <<EOT
+apt-get update -y
+apt-get install -y \
+  tar \
+  zlib1g \
+  perl \
+  fontconfig
+
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+EOT
 
 RUN mkdir -p "${INSTALL_DIR}"
 ADD texlive.profile "${INSTALL_DIR}/texlive.profile"
 
-ENV PATH="${TEXDIR}/bin/x86_64-linuxmusl:${PATH}"
+ENV PATH="${TEXDIR}/bin/aarch64-linux:${PATH}"
 
-RUN apk add --no-cache --virtual .fetch-deps xz tar wget \
- && curl -L "http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz" \
-      | tar -xz -C "${INSTALL_DIR}" --strip-components=1 \
- && "${INSTALL_DIR}/install-tl" \
-      "--profile=${INSTALL_DIR}/texlive.profile" \
- && rm -rf "${INSTALL_DIR}" \
- && apk del .fetch-deps
+RUN <<EOT
+INSTALL_DEPS=(wget xzdec)
+
+apt-get update -y
+apt-get install -y "${INSTALL_DEPS[@]}"
+
+wget -O- "${TEXLIVE_MIRROR_URL}/tlnet/install-tl-unx.tar.gz" \
+  | tar -xz -C "${INSTALL_DIR}" --strip-components=1
+
+"${INSTALL_DIR}/install-tl" \
+  "--profile=${INSTALL_DIR}/texlive.profile"
+
+rm -rf "${INSTALL_DIR}"
+apt-get remove -y "${INSTALL_DEPS[@]}"
+apt-get autoremove -y
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+EOT
+
+SHELL ["/bin/sh"]
 
 WORKDIR /workdir
 
@@ -30,14 +54,26 @@ CMD ["sh"]
 
 FROM basic AS recommended
 
-# for tlmgr
-RUN apk add --no-cache xz tar wget
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-RUN tlmgr update --self --all \
- && tlmgr install \
-      collection-latex \
-      collection-fontsrecommended \
-      collection-latexrecommended
+# for tlmgr
+RUN <<EOT
+apt-get update -y
+apt-get install -y wget xzdec
+
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+EOT
+
+RUN <<EOT
+tlmgr update --self --all
+tlmgr install \
+  collection-latex \
+  collection-fontsrecommended \
+  collection-latexrecommended
+EOT
+
+SHELL ["/bin/sh"]
 
 WORKDIR /workdir
 
@@ -46,12 +82,18 @@ CMD ["sh"]
 
 FROM recommended AS extra
 
-RUN tlmgr update --self --all \
- && tlmgr install \
-      collection-pictures \
-      collection-latexextra \
-      collection-fontsextra \
-      collection-mathscience
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+
+RUN <<EOT
+tlmgr update --self --all
+tlmgr install \
+  collection-pictures \
+  collection-latexextra \
+  collection-fontsextra \
+  collection-mathscience
+EOT
+
+SHELL ["/bin/sh"]
 
 WORKDIR /workdir
 
@@ -60,29 +102,40 @@ CMD ["sh"]
 
 FROM extra AS full
 
-RUN apk add --no-cache \
-      gcc \
-      musl-dev \
-      libffi-dev \
-      bash \
-      make
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-RUN apk add --no-cache \
-      python3 \
-      python3-dev \
-      py3-pip \
- && pip3 install --upgrade pip \
- && pip3 install \
-      poetry \
-      pygments
+RUN <<EOT
+apt-get update -y
+apt-get install -y \
+  gcc \
+  libffi-dev \
+  make
 
-RUN tlmgr update --self --all \
- && tlmgr install \
-      collection-langjapanese \
-      collection-luatex \
-      latexmk \
-      latexpand \
-      latexdiff
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+EOT
+
+RUN <<EOT
+apt-get update -y
+apt-get install -y python3
+
+wget -O- https://install.python-poetry.org | python3 -
+
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+EOT
+
+RUN <<EOT
+tlmgr update --self --all
+tlmgr install \
+  collection-langjapanese \
+  collection-luatex \
+  latexmk \
+  latexpand \
+  latexdiff
+EOT
+
+SHELL ["/bin/sh"]
 
 WORKDIR /workdir
 
